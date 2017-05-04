@@ -1,0 +1,16 @@
+uniform mat4 u_projection; // Projection matrix (maps from world space to clip space)
+uniform mat3 u_model;      // Model matrix (maps from model space to world space)
+uniform vec4 u_color;      // Color of shape
+attribute vec2 a_position; // Position of current vertex in model space
+
+export void vertex(){
+      gl_Position.xy = a_position;                  // Model space
+      gl_Position.z = 1.0;
+      gl_Position.xyz = u_model * gl_Position.xyz;  // World space
+      gl_Position.w = 1.0;
+      gl_Position = u_projection * gl_Position;     // Clip space
+}
+
+export void fragment(){
+    gl_FragColor = u_color;
+}

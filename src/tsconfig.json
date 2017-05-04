@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig",
+  "compilerOptions": {
+    "declaration": true,
+    "noUnusedLocals": false,
+    "outDir": "../lib",
+    "sourceMap": true
+  },
+  "include": ["./*"]
+}

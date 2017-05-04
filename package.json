@@ -1,0 +1,36 @@
+{
+  "name": "gulp-shadify",
+  "version": "0.0.0",
+  "description": "Generates typed WebGL programs from a .glslx file.",
+  "main": "main.js",
+  "typings": "main.d.ts",
+  "author": "wjheesen",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wjheesen/gulp-shadify"
+  },
+  "keywords": [
+    "WebGL",
+    "Shader",
+    "TypeScript",
+    "gulp"
+  ],
+  "dependencies": {
+    "@types/through2": "^2.0.32",
+    "@types/vinyl": "^2.0.0",
+    "glslx": "^0.1.25",
+    "stream": "0.0.2",
+    "through2": "^2.0.3",
+    "ts-type-info": "^7.0.1",
+    "vinyl": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/gulp": "^4.0.2",
+    "@types/gulp-rename": "0.0.32",
+    "@types/node": "^7.0.15",
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "typescript": "^2.2.2"
+  }
+}

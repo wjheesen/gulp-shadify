@@ -1,0 +1,35 @@
+uniform mat4 u_projection;   // Projection matrix
+uniform vec4 u_color;        // Color of line
+uniform vec4 u_line;         // Position of line
+uniform float u_thickness;   // Thickness of line
+attribute vec2 a_basisCoord; // Specifies current line vertex (0,0.5),(0,-0.5),(1,-0.5),(1,0.5)
+
+export void vertex(){
+    // Let p1 = (x1,y1), p2 = (x2,y2)
+    vec2 p1 = vec2(u_line[0], u_line[1]);
+    vec2 p2 = vec2(u_line[2], u_line[3]);
+    // Scale the square {left: 0, right: 1, bottom: -0.5, top: 0.5}
+    // to a rectangle with width=dist(p1,p2), and height = u_thickness
+    float width = distance(p1, p2);
+    float height = u_thickness;
+    float sx = width * a_basisCoord.x;
+    float sy = height * a_basisCoord.y;
+    // Rotate the rectangle by the angle formed by p2, p1, and (x1+e, y1) for any e>0-->
+    float hypotenuse = width;
+    float adjacent = p2.x - p1.x;
+    float opposite = p2.y - p1.y;
+    float sin = opposite / hypotenuse;
+    float cos = adjacent / hypotenuse;
+    float rx = cos * sx - sin * sy;
+    float ry = sin * sx + cos * sy;
+    // Translate rectangle to p1
+    float tx = rx + p1.x;
+    float ty = ry + p1.y;
+    // Apply projection matrix
+    gl_Position = u_projection * vec4(tx, ty, 1.0, 1.0);
+}
+
+export void fragment(){
+    gl_FragColor = u_color;
+}
+

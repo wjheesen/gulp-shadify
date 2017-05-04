@@ -1,0 +1,30 @@
+uniform mat4 u_projection;   // Projection matrix
+uniform vec4 u_color;        // Color of ellipse
+uniform vec4 u_bounds;       // Boundaries of ellipse 
+attribute vec2 a_basisCoord; // Specifies current boundary vertex (0,1),(0,0),(1,0),(1,1)
+varying vec2 v_NDC;          // Interpolated from a_basisCoord
+
+export void vertex(){
+      // Get boundaries of ellipse
+      float left = u_bounds[0];
+      float top = u_bounds[1];
+      float right = u_bounds[2];
+      float bottom = u_bounds[3];
+      float width = right - left;
+      float height = top - bottom;
+      // Get position of current vertex
+      float posX = width * a_basisCoord.x + left;     
+      float posY = height * a_basisCoord.y + bottom; 
+      // Pass position to fragment shader
+      gl_Position = u_projection * vec4(posX, posY, 1.0, 1.0);
+      // Transform basis coord to NDC space and pass to fragment shader
+      v_NDC = a_basisCoord * 2.0 - 1.0;
+}
+
+export void fragment(){
+      // Keep pixel if distance squared from origin <= 1.0
+      float distanceSquared = dot(v_NDC, v_NDC);
+      float isInEllipse = float(distanceSquared <= 1.0);
+      gl_FragColor = u_color * isInEllipse;
+}
+
