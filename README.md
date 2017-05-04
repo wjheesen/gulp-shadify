@@ -77,7 +77,7 @@ GLSLX | Output
 ----- | ------
 [shape.glslx][1] | [shape.ts][2]
 [ellipse.glslx][3] | [ellipse.ts][4]
-[line.glslx][5] | [line.ts] [6]
+[line.glslx][5] | [line.ts][6]
 
 [1]: https://github.com/wjheesen/gulp-shadify/blob/master/examples/shape.glslx "Shape GLSLX"
 [2]: https://github.com/wjheesen/gulp-shadify/blob/master/examples/shape.ts "Shape Output"
