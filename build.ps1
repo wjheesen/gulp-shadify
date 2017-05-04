@@ -8,4 +8,3 @@ tsc --project ./src/tsconfig.json
 Copy-Item -Path package.json, README.md, LICENSE -Destination ./lib
 # Copy lib folder to node_modules (for self reference)
 Copy-Item -Path ./lib -Destination ./node_modules/gulp-shadify -Recurse
-

@@ -7,8 +7,6 @@ Generates typed WebGL programs from a .glslx file.
 `npm install gulp-shadify --save-dev`
 
 ## Create a .glslx file
-The first function must be the vertex shader, and the second function must be the fragment shader.
-
 For example: `./examples/shape.glslx`
 
 ```glsl
@@ -18,11 +16,8 @@ uniform vec4 u_color;      // Color of shape
 attribute vec2 a_position; // Position of current vertex in model space
 
 export void vertex(){
-      gl_Position.xy = a_position;                  // Model space
-      gl_Position.z = 1.0;
-      gl_Position.xyz = u_model * gl_Position.xyz;  // World space
-      gl_Position.w = 1.0;
-      gl_Position = u_projection * gl_Position;     // Clip space
+    vec3 worldPosition = u_model * vec3(a_position, 1.0);
+    gl_Position = u_projection * vec4(worldPosition, 1.0);
 }
 
 export void fragment(){
@@ -30,10 +25,15 @@ export void fragment(){
 }
 ```
 
+Note:
+- The first function must be the vertex shader.
+- The second function must be the fragment shader.
+- Uniforms must be prefixed with "u_".
+- Attributes must be prefixed with "a_".
+
 See http://evanw.github.io/glslx/ for information on GLSLX.
 
 ## Create a gulp task
-
 ```javascript
 var gulp = require("gulp");
 var rename = require("gulp-rename");
@@ -46,8 +46,8 @@ gulp.task("build:examples", function () {
         .pipe(rename({ extname: ".ts" }))
         .pipe(gulp.dest("./examples/"));
 });
-
 ```
+
 ## Run gulp task
 `gulp shadify`
 
@@ -60,7 +60,7 @@ import {createProgramFromSources} from "gulp-shadify/program";
  * Creates a new ShapeProgram.
  */
 export function createShapeProgram(gl: WebGLRenderingContext) {
-    let program = createProgramFromSources(gl, "uniform mat4 b;uniform mat3 a;attribute vec2 c;void main(){gl_Position.xy=c,gl_Position.z=1.,gl_Position.xyz=a*gl_Position.xyz,gl_Position.w=1.,gl_Position=b*gl_Position;}", "uniform vec4 d;void main(){gl_FragColor=d;}");
+    let program = createProgramFromSources(gl, "uniform mat4 b;uniform mat3 a;attribute vec2 c;void main(){vec3 e=a*vec3(c,1.);gl_Position=b*vec4(e,1.);}", "uniform vec4 d;void main(){gl_FragColor=d;}");
     return {
         location: program,
         u_model: gl.getUniformLocation(program, "a"),
@@ -72,7 +72,6 @@ export function createShapeProgram(gl: WebGLRenderingContext) {
 ```
 
 ## Examples
-
 GLSLX | Output
 ----- | ------
 [shape.glslx][1] | [shape.ts][2]
@@ -85,4 +84,3 @@ GLSLX | Output
 [4]: https://github.com/wjheesen/gulp-shadify/blob/master/examples/ellipse.ts "Ellipse Output"
 [5]: https://github.com/wjheesen/gulp-shadify/blob/master/examples/line.glslx "Line GLSLX"
 [6]: https://github.com/wjheesen/gulp-shadify/blob/master/examples/line.ts "Line Output"
-

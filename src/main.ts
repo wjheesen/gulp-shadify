@@ -18,7 +18,8 @@ export = function shadify(){
         
         // Check for compilation errors
         if(result.log){
-            console.error(result.log);
+            let errorMsg = result.log.replace("<stdin>", file.relative)
+            console.error(errorMsg);
             return;
         }
         

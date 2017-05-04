@@ -4,11 +4,8 @@ uniform vec4 u_color;      // Color of shape
 attribute vec2 a_position; // Position of current vertex in model space
 
 export void vertex(){
-      gl_Position.xy = a_position;                  // Model space
-      gl_Position.z = 1.0;
-      gl_Position.xyz = u_model * gl_Position.xyz;  // World space
-      gl_Position.w = 1.0;
-      gl_Position = u_projection * gl_Position;     // Clip space
+    vec3 worldPosition = u_model * vec3(a_position, 1.0);
+    gl_Position = u_projection * vec4(worldPosition, 1.0);
 }
 
 export void fragment(){
