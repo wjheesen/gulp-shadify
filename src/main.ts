@@ -54,15 +54,15 @@ export = function shadify(){
         });
 
         // Add function to create program
+        let createProgramName = `create${programName}`
         tsFile.addFunction({
-            name: `create${programName}`,
+            name: createProgramName,
             parameters: [{name: 'gl', type: 'WebGLRenderingContext'}],
             documentationComment: `Creates a new ${programName}.`,
-            isExported: true,
             onWriteFunctionBody: writer => {
                 writer.write(`let program = ${createProgram}(gl, "${vs}", "${fs}");`)
                 writer.newLine().write("return").block(() => {
-                    writer.newLine().write(`location: program,`)
+                    writer.newLine().write(`program: program,`)
                     uniforms.forEach(uniform =>{
                         writer.newLine().write(`${uniform.alias}: gl.getUniformLocation(program, "${uniform.name}"),`)
                     })
@@ -70,7 +70,11 @@ export = function shadify(){
                         writer.newLine().write(`${attrib.alias}: gl.getAttribLocation(program, "${attrib.name}"),`)
                     })
                 })
+            },
+            onAfterWrite: writer => {
+                writer.newLine().write(`export = ${createProgramName};`);
             }
+
         });
 
         // Output  ts file
