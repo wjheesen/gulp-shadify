@@ -4,7 +4,7 @@ uniform vec4 u_bounds;       // Boundaries of ellipse
 attribute vec2 a_basisCoord; // Specifies current boundary vertex (0,1),(0,0),(1,0),(1,1)
 varying vec2 v_NDC;          // Interpolated from a_basisCoord
 
-export void vertex(){
+export void vertexShader(){
       // Get boundaries of ellipse
       float left = u_bounds[0];
       float top = u_bounds[1];
@@ -21,7 +21,7 @@ export void vertex(){
       v_NDC = a_basisCoord * 2.0 - 1.0;
 }
 
-export void fragment(){
+export void fragmentShader(){
       // Keep pixel if distance squared from origin <= 1.0
       float distanceSquared = dot(v_NDC, v_NDC);
       float isInEllipse = float(distanceSquared <= 1.0);

@@ -22,7 +22,7 @@ function Update-Gulpfile(){
 }
 
 function Update-Examples(){
-    gulp build:examples
+    gulp update:examples
 }
 
 function Update-All(){

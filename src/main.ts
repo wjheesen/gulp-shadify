@@ -25,59 +25,85 @@ export = function shadify(){
         
         // Parse program 
         let program = <GLSLX.Program> JSON.parse(result.output);
-        let programName = getProgramName(file);
         let shaders = program.shaders;
         let renaming = program.renaming;
-        let vs = shaders[0].contents;
-        let fs = shaders[1].contents;
+
+        // Parse uniforms and attribs
         let uniforms = <Variable[]> [];
         let attribs = <Variable[]> [];
-
-        // Extract variables
-        for(let property in renaming){
-            let variable = { name: renaming[property], alias: property };
-            if(property.indexOf("u_") === 0){
-                uniforms.push(variable) // Uniform must start with "u_"
-            } else if(property.indexOf("a_") === 0) {
-                attribs.push(variable)  // Attrib must start with "a_"
+        let uniformRenaming = <StringMap> {};
+        let attribRenaming = <StringMap> {};        
+        let regex = /(uniform|attribute) (.+?) (.+?);/g;
+        
+        shaders.forEach(shader => {
+            let match = <RegExpExecArray> null;
+            while(match = regex.exec(shader.contents)){
+                let declarationType = match[1]; // "uniform" or "attribute"
+                let type = match[2]; // Vec2, Sampler2D, etc..
+                let name = match[3]; // (re)name of variable
+                for(let property in renaming){
+                    if(renaming[property] === name){
+                        let variable = { name: name, alias: property, type: type }
+                        if(declarationType === "uniform"){
+                            uniforms.push(variable);
+                            uniformRenaming[property] = name;
+                        } else {
+                            attribs.push(variable);
+                            attribRenaming[property] = name;
+                        }
+                    }
+                }     
             }
-        }
+        });
 
         // Create ts file
         let tsFile = tsTypeInfo.createFile();
 
-        // Import the createProgram function
-        let createProgram = "createProgramFromSources";
-        tsFile.addImport({
-                namedImports: [{name: createProgram}],
-                moduleSpecifier: "gulp-shadify/program"
+        tsFile.addInterface({
+            name: "Uniforms",
+            isExported: true,
+            properties: uniforms.map(uniform => {
+                return {
+                    name: uniform.alias, 
+                    type: "WebGLUniformLocation",
+                    documentationComment: `The location of uniform ${uniform.type} ${uniform.alias}.`
+                }
+            })
         });
 
-        // Add function to create program
-        let createProgramName = `create${programName}`
-        tsFile.addFunction({
-            name: createProgramName,
-            parameters: [{name: 'gl', type: 'WebGLRenderingContext'}],
-            documentationComment: `Creates a new ${programName}.`,
-            onWriteFunctionBody: writer => {
-                writer.write(`let program = ${createProgram}(gl, "${vs}", "${fs}");`)
-                writer.newLine().write("return").block(() => {
-                    writer.newLine().write(`program: program,`)
-                    uniforms.forEach(uniform =>{
-                        writer.newLine().write(`${uniform.alias}: gl.getUniformLocation(program, "${uniform.name}"),`)
-                    })
-                    attribs.forEach(attrib =>{
-                        writer.newLine().write(`${attrib.alias}: gl.getAttribLocation(program, "${attrib.name}"),`)
-                    })
-                })
-            },
-            onAfterWrite: writer => {
-                writer.newLine().write(`export = ${createProgramName};`);
-            }
+        tsFile.addInterface({
+            name: "Attributes",
+            isExported: true,
+            properties: attribs.map(attrib => {
+                return {
+                    name: attrib.alias, 
+                    type: "number",
+                    documentationComment: `The location of attribute ${attrib.type} ${attrib.alias}.`
+                }
+            })
+        })
 
-        });
+        shaders.forEach(shader => {
+            tsFile.addVariable({
+                isExported: true, 
+                name: shader.name, 
+                defaultExpression: JSON.stringify(shader.contents),
+            })
+        })
 
-        // Output  ts file
+        tsFile.addVariable({
+            isExported: true, 
+            name: "uniformRenaming",
+            defaultExpression: JSON.stringify(uniformRenaming)
+        })
+
+        tsFile.addVariable({
+            isExported: true, 
+            name: "attributeRenaming",
+            defaultExpression: JSON.stringify(attribRenaming)
+        })
+
+        // Output ts file
         file.contents = new Buffer(tsFile.write());
         callback(null, file);
     });
@@ -86,15 +112,10 @@ export = function shadify(){
 interface Variable {
     name: string;
     alias: string;
+    type: string;
 }
 
-function getProgramName(file: File){
-    let baseWithExt = file.relative;
-    let baseLength = baseWithExt.length - ".glslx".length;
-    let base = baseWithExt.substr(0, baseLength);
-    return capitalize(base) + "Program";
+interface StringMap {
+    [key: string]: string;
 }
 
-function capitalize(str: string){
-    return str[0].toUpperCase() + str.slice(1);
-}
