@@ -30,7 +30,7 @@ export interface Attributes {
 
 export type Variables = Uniforms|Attributes;
 
-export const vertex = "uniform mat4 m;uniform vec4 c;uniform float p;attribute vec2 e;void main(){vec2 a=vec2(c.x,c.y),b=vec2(c.z,c.w);float d=distance(a,b),k=p,g=d*e.x,h=k*e.y,i=d,n=b.x-a.x,o=b.y-a.y,j=o/i,f=n/i,q=f*g-j*h,r=j*g+f*h,s=q+a.x,t=r+a.y;gl_Position=m*vec4(s,t,1.,1.);}";
-export const fragment = "uniform vec4 l;void main(){gl_FragColor=l;}";
+export const vertex = "precision mediump float;uniform mat4 m;uniform vec4 c;uniform float p;attribute vec2 e;void main(){vec2 a=vec2(c.x,c.y),b=vec2(c.z,c.w);float d=distance(a,b),k=p,g=d*e.x,h=k*e.y,i=d,n=b.x-a.x,o=b.y-a.y,j=o/i,f=n/i,q=f*g-j*h,r=j*g+f*h,s=q+a.x,t=r+a.y;gl_Position=m*vec4(s,t,1.,1.);}";
+export const fragment = "precision mediump float;uniform vec4 l;void main(){gl_FragColor=l;}";
 export const UniformRenaming = {"u_projection":"m","u_line":"c","u_thickness":"p","u_color":"l"};
 export const AttributeRenaming = {"a_basisCoord":"e"};

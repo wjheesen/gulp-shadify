@@ -26,7 +26,7 @@ export interface Attributes {
 
 export type Variables = Uniforms|Attributes;
 
-export const vertex = "uniform mat4 i;uniform vec4 c;attribute vec2 e;varying vec2 d;void main(){float a=c.x,f=c.y,h=c.z,b=c.w,j=h-a,k=f-b,l=j*e.x+a,m=k*e.y+b;gl_Position=i*vec4(l,m,1.,1.),d=e*2.-1.;}";
-export const fragment = "uniform vec4 g;varying vec2 d;void main(){float a=dot(d,d),b=float(a<=1.);gl_FragColor=g*b;}";
+export const vertex = "precision mediump float;uniform mat4 i;uniform vec4 c;attribute vec2 e;varying vec2 d;void main(){float a=c.x,f=c.y,h=c.z,b=c.w,j=h-a,k=f-b,l=j*e.x+a,m=k*e.y+b;gl_Position=i*vec4(l,m,1.,1.),d=e*2.-1.;}";
+export const fragment = "precision mediump float;uniform vec4 g;varying vec2 d;void main(){float a=dot(d,d),b=float(a<=1.);gl_FragColor=g*b;}";
 export const UniformRenaming = {"u_projection":"i","u_bounds":"c","u_color":"g"};
 export const AttributeRenaming = {"a_basisCoord":"e"};

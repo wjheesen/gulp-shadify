@@ -1,3 +1,5 @@
+precision mediump float;
+
 uniform mat4 u_projection; // Projection matrix (maps from world space to clip space)
 uniform mat3 u_model;      // Model matrix (maps from model space to world space)
 uniform vec4 u_color;      // Color of shape

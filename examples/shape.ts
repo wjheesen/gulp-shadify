@@ -26,7 +26,7 @@ export interface Attributes {
 
 export type Variables = Uniforms|Attributes;
 
-export const vertex = "uniform mat4 b;uniform mat3 a;attribute vec2 c;void main(){vec3 e=a*vec3(c,1.);gl_Position=b*vec4(e,1.);}";
-export const fragment = "uniform vec4 d;void main(){gl_FragColor=d;}";
+export const vertex = "precision mediump float;uniform mat4 b;uniform mat3 a;attribute vec2 c;void main(){vec3 e=a*vec3(c,1.);gl_Position=b*vec4(e,1.);}";
+export const fragment = "precision mediump float;uniform vec4 d;void main(){gl_FragColor=d;}";
 export const UniformRenaming = {"u_projection":"b","u_model":"a","u_color":"d"};
 export const AttributeRenaming = {"a_position":"c"};

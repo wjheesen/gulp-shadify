@@ -1,3 +1,5 @@
+precision mediump float;
+
 uniform mat4 u_projection;   // Projection matrix
 uniform vec4 u_color;        // Color of ellipse
 uniform vec4 u_bounds;       // Boundaries of ellipse 
