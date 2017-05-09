@@ -3,11 +3,11 @@ uniform mat3 u_model;      // Model matrix (maps from model space to world space
 uniform vec4 u_color;      // Color of shape
 attribute vec2 a_position; // Position of current vertex in model space
 
-export void vertexShader(){
+export void vertex(){
     vec3 worldPosition = u_model * vec3(a_position, 1.0);
     gl_Position = u_projection * vec4(worldPosition, 1.0);
 }
 
-export void fragmentShader(){
+export void fragment(){
     gl_FragColor = u_color;
 }

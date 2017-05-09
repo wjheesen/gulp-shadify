@@ -4,7 +4,7 @@ uniform vec4 u_line;         // Position of line
 uniform float u_thickness;   // Thickness of line
 attribute vec2 a_basisCoord; // Specifies current line vertex (0,0.5),(0,-0.5),(1,-0.5),(1,0.5)
 
-export void vertexShader(){
+export void vertex(){
     // Let p1 = (x1,y1), p2 = (x2,y2)
     vec2 p1 = vec2(u_line[0], u_line[1]);
     vec2 p2 = vec2(u_line[2], u_line[3]);
@@ -29,7 +29,7 @@ export void vertexShader(){
     gl_Position = u_projection * vec4(tx, ty, 1.0, 1.0);
 }
 
-export void fragmentShader(){
+export void fragment(){
     gl_FragColor = u_color;
 }
 

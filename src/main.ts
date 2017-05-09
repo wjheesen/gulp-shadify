@@ -62,6 +62,7 @@ export = function shadify(){
         tsFile.addInterface({
             name: "Uniforms",
             isExported: true,
+            indexSignatures: [{isReadonly: true, keyName: "name", keyType: "string", returnType: "WebGLUniformLocation"}],
             properties: uniforms.map(uniform => {
                 return {
                     name: uniform.alias, 
@@ -74,6 +75,7 @@ export = function shadify(){
         tsFile.addInterface({
             name: "Attributes",
             isExported: true,
+            indexSignatures: [{isReadonly: true, keyName: "name", keyType: "string", returnType: "number"}],
             properties: attribs.map(attrib => {
                 return {
                     name: attrib.alias, 
@@ -83,9 +85,16 @@ export = function shadify(){
             })
         })
 
+        tsFile.addTypeAlias({
+            isExported: true,
+            name: "Variables",
+            type: "Uniforms|Attributes"
+        })
+
         shaders.forEach(shader => {
             tsFile.addVariable({
                 isExported: true, 
+                declarationType: "const",
                 name: shader.name, 
                 defaultExpression: JSON.stringify(shader.contents),
             })
@@ -93,13 +102,15 @@ export = function shadify(){
 
         tsFile.addVariable({
             isExported: true, 
-            name: "uniformRenaming",
+            declarationType: "const",
+            name: "UniformRenaming",
             defaultExpression: JSON.stringify(uniformRenaming)
         })
 
         tsFile.addVariable({
             isExported: true, 
-            name: "attributeRenaming",
+            declarationType: "const",
+            name: "AttributeRenaming",
             defaultExpression: JSON.stringify(attribRenaming)
         })
 
