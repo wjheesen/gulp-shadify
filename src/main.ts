@@ -38,21 +38,24 @@ export = function shadify(){
         shaders.forEach(shader => {
             let match = <RegExpExecArray> null;
             while(match = regex.exec(shader.contents)){
-                let declarationType = match[1]; // "uniform" or "attribute"
-                let type = match[2]; // Vec2, Sampler2D, etc..
-                let name = match[3]; // (re)name of variable
-                for(let property in renaming){
-                    if(renaming[property] === name){
-                        let variable = { name: name, alias: property, type: type }
-                        if(declarationType === "uniform"){
-                            uniforms.push(variable);
-                            uniformRenaming[property] = name;
-                        } else {
-                            attribs.push(variable);
-                            attribRenaming[property] = name;
+                // TODO: capture attribute vec2 c,d;
+                let declarationType = match[1];         // "uniform" or "attribute"
+                let type = match[2];                    // Vec2, Sampler2D, etc..
+                let names = match[3].split(",");        // Declaration may contain multiple variables separated by commas
+                names.forEach(name => {   
+                    for(let property in renaming){
+                        if(renaming[property] === name){
+                            let variable = { name: name, alias: property, type: type }
+                            if(declarationType === "uniform"){
+                                uniforms.push(variable);
+                                uniformRenaming[property] = name;
+                            } else {
+                                attribs.push(variable);
+                                attribRenaming[property] = name;
+                            }
                         }
-                    }
-                }     
+                    }    
+                })            
             }
         });
 
