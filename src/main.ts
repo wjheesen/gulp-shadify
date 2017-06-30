@@ -38,20 +38,28 @@ export = function shadify(){
         shaders.forEach(shader => {
             let match = <RegExpExecArray> null;
             while(match = regex.exec(shader.contents)){
-                // TODO: capture attribute vec2 c,d;
                 let declarationType = match[1];         // "uniform" or "attribute"
                 let type = match[2];                    // Vec2, Sampler2D, etc..
                 let names = match[3].split(",");        // Declaration may contain multiple variables separated by commas
                 names.forEach(name => {   
                     for(let property in renaming){
+                        // If variable exists in compiled program
                         if(renaming[property] === name){
                             let variable = { name: name, alias: property, type: type }
+                            // If variable is a uniform
                             if(declarationType === "uniform"){
-                                uniforms.push(variable);
-                                uniformRenaming[property] = name;
-                            } else {
-                                attribs.push(variable);
-                                attribRenaming[property] = name;
+                                // Add to set of uniforms
+                                if(!uniforms.some(uniform => uniform.name === variable.name)){
+                                    uniforms.push(variable);
+                                    uniformRenaming[property] = name;
+                                }
+                            } 
+                            else {
+                                // Otherwise add to set of attributes
+                                if(!attribs.some(attrib => attrib.name === variable.name)){
+                                    attribs.push(variable);
+                                    attribRenaming[property] = name;
+                                }
                             }
                         }
                     }    
